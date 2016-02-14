@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/home"
+            android:checked="false"
+            android:icon="@android:drawable/btn_star_big_on"
+            android:title="home" />
+
+        <item
+            android:id="@+id/search"
+            android:checked="false"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="@string/action_search" />
+
+        <item
+            android:id="@+id/favoris"
+            android:checked="false"
+            android:icon="@android:drawable/btn_star_big_on"
+            android:title="favoris" />
+
+        <item
+            android:id="@+id/settings"
+            android:checked="false"
+            android:icon="@android:drawable/ic_dialog_dialer"
+            android:title="@string/action_settings" />
+
+
+    </group>
+</menu>
