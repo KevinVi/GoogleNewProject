@@ -65,4 +65,5 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="openDrawer">open</string>
     <string name="closeDrawer">close</string>
+    <string name="title_activity_recycler">RecyclerActivity</string>
 </resources>

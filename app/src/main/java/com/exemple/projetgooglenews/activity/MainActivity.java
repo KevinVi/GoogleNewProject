@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
-                    Intent i = new Intent(getApplicationContext(), ListActivity.class);
+                    Intent i = new Intent(getApplicationContext(), RecyclerActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                     i.putExtra("search", title);
@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-                Intent i = new Intent(this, ListActivity.class);
+                Intent i = new Intent(this, RecyclerActivity.class);
 
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.putExtra("search", text.getText().toString());

@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.exemple.projetgooglenews.R;
@@ -22,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 public class DetailActivity extends AppCompatActivity {
 
     TextView title , content, link;
+    ProgressBar bar;
     ImageView img;
     Data mData;
     @Override
@@ -35,6 +37,7 @@ public class DetailActivity extends AppCompatActivity {
         content= (TextView)findViewById(R.id.content_detail);
         link = (TextView) findViewById(R.id.link_web);
         img = (ImageView) findViewById(R.id.img_detail);
+        bar = (ProgressBar) findViewById(R.id.progressRcycler);
 
 
         Intent i = getIntent();
@@ -57,7 +60,7 @@ public class DetailActivity extends AppCompatActivity {
         });
         Bitmap btm  ;
         try {
-            new ImageLoader(img).execute(mData.getImg());
+            new ImageLoader(bar,img,getApplicationContext()).execute(mData.getImg());
 
         } catch (Exception e) {
             e.printStackTrace();

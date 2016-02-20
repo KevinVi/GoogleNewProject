@@ -3,7 +3,8 @@
     package="com.exemple.projetgooglenews">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -26,8 +27,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SettingActivity"
-            android:label="@string/title_activity_settings"/>
+            android:label="@string/title_activity_settings" />
         <activity android:name=".activity.WebActivity" />
+        <activity
+            android:name=".activity.RecyclerActivity"
+            android:label="@string/title_activity_recycler"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

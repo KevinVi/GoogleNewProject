@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.exemple.projetgooglenews.R;
@@ -18,7 +19,9 @@ import com.exemple.projetgooglenews.activity.DetailActivity;
 import com.exemple.projetgooglenews.model.Data;
 import com.exemple.projetgooglenews.tools.ImageLoader;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -27,10 +30,12 @@ import java.util.concurrent.ExecutionException;
 public class ListAdapter extends ArrayAdapter<Data> {
 
     private ArrayList<String> list;
+    private HashMap<String, SoftReference<Bitmap>> mHashMap;
 
 
     public ListAdapter(Context context, ArrayList<Data> items) {
         super(context, 0, items);
+        mHashMap = new HashMap<>();
     }
 
 
@@ -50,6 +55,7 @@ public class ListAdapter extends ArrayAdapter<Data> {
             TextView tt1 = (TextView) v.findViewById(R.id.number_list);
             TextView tt2 = (TextView) v.findViewById(R.id.content_list);
             ImageView img = (ImageView) v.findViewById(R.id.image_list);
+            ProgressBar bar = (ProgressBar) v.findViewById(R.id.progressRcycler);
 
             if (tt1 != null) {
                 tt1.setText(p.title);
@@ -58,13 +64,22 @@ public class ListAdapter extends ArrayAdapter<Data> {
             if (tt2 != null) {
                 tt2.setText(p.content);
             }
-            if (img != null) {
-                try {
-                    new ImageLoader(img).execute(p.img);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            if (mHashMap.containsKey(p.img)) {
+                SoftReference<Bitmap> ref = mHashMap.get(p.img);
+                Bitmap bitmap = ref.get();
+                if (bitmap != null) {
+                    img.setImageBitmap(bitmap);
+                } else {
+                    new ImageLoader(bar, img, getContext())
+                            .execute(p.img,
+                                    mHashMap);
                 }
+            } else {
+                new ImageLoader(bar, img, getContext())
+                        .execute(p.img,
+                                mHashMap);
             }
+
 
         }
         final Data mData = p;
