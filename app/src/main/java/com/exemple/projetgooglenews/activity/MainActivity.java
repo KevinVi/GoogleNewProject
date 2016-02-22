@@ -24,10 +24,9 @@ import android.widget.Toast;
 import com.exemple.projetgooglenews.R;
 import com.exemple.projetgooglenews.model.Data;
 import com.exemple.projetgooglenews.tools.JsonRequest;
-
+import com.exemple.projetgooglenews.database.Database;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-
 import static android.widget.LinearLayout.*;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
@@ -46,11 +45,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private Context mContext;
+    private Database News_db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        News_db = new Database(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
