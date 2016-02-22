@@ -25,12 +25,14 @@ public class Data implements Serializable {
         this.img = img;
         this.unescapedUrl = url;
     }
+    public Data() {
+    }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public static void setTitle(String title) {
         this.title = Html.fromHtml(title).toString();
     }
 
@@ -54,7 +56,7 @@ public class Data implements Serializable {
         return img;
     }
 
-    public void setImg(String img) {
+    public static void setImg(String img) {
         this.img = img;
     }
 
@@ -62,7 +64,7 @@ public class Data implements Serializable {
         return content;
     }
 
-    public void setContent(String content) {
+    public static void setContent(String content) {
         this.content = Html.fromHtml(content).toString();
     }
 

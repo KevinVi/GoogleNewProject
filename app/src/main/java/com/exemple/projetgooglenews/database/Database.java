@@ -2,8 +2,14 @@ package com.exemple.projetgooglenews.database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.exemple.projetgooglenews.model.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saman on 21/02/2016.
@@ -12,6 +18,7 @@ public class Database extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "GoogleNews.db";
     public static final String TABLE_NAME = "news_table";
+    public static final String COL_id = "Id";
     public static final String COL_titre = "Titre";
     public static final String COL_contenu = "Contenu";
     public static final String COL_image = "Image";
@@ -19,6 +26,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String COL_visible = "Visible";
     public static final String COL_date = "Date";
     public static final String COL_auteur = "Auteur";
+    public static final String COL_favoris = "Favoris";
 
     public static final String TABLE_TAG = "tag_table";
     public static final String COL_tag = "Tag";
@@ -32,7 +40,7 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table" + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, Titre TEXT, Contenu TEXT, Image TEXT)");
-        db.execSQL("create table" +TABLE_TAG +" (ID INTEGER PRIMARY KEY AUTOINCREMENT,Tag TEXT)");
+        db.execSQL("create table" + TABLE_TAG + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,Tag TEXT)");
     }
 
     @Override
@@ -41,7 +49,7 @@ public class Database extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertNews(String titre, String contenu, String img, String url, String visible, String date, String auteur ){
+    public boolean insertNews(String titre, String contenu, String img, String url, String date, String auteur ){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -49,14 +57,52 @@ public class Database extends SQLiteOpenHelper {
         contentValues.put(COL_contenu, contenu);
         contentValues.put(COL_image, img);
         contentValues.put(COL_url, url);
-        contentValues.put(COL_visible, visible);
+        contentValues.put(COL_visible, "true");
         contentValues.put(COL_date, date);
         contentValues.put(COL_auteur, auteur);
 
         long result = db.insert(TABLE_NAME, null, contentValues);
+        db.close();
         if (result == -1)
             return false;
         else
             return true;
+    }
+
+    public void setVisibility(String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_visible, "true");
+        db.update(TABLE_NAME, contentValues, "Id =" + id, null);
+        db.close();
+    }
+
+    public void setFavoris(String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_favoris, "true");
+        db.update(TABLE_NAME, contentValues, "Id = " + id, null);
+        db.close();
+    }
+
+    public List<Data> getAllNews() {
+        List<Data> newsList = new ArrayList<Data>();
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_visible+"= true";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Data news = new Data();
+                Data.setTitle(cursor.getString(1));
+                Data.setContent(cursor.getString(2));
+                Data.setImg(cursor.getString(3));
+                newsList.add(news);
+            } while (cursor.moveToNext());
+        }
+        return newsList;
     }
 }
