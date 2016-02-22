@@ -9,12 +9,12 @@ import java.io.Serializable;
  * Created by kevin on 12/01/2016.
  */
 public class Data implements Serializable {
-    public String title;
-    public String content;
-    public String editor;
-    public String date;
-    public String img;
-    public String unescapedUrl;
+    public static String title;
+    public static String content;
+    public static String editor;
+    public static String date;
+    public static String img;
+    public static String unescapedUrl;
 
 
     public Data(String title, String content, String editor, String date, String img, String url) {
@@ -32,48 +32,48 @@ public class Data implements Serializable {
         return title;
     }
 
-    public static void setTitle(String title) {
-        this.title = Html.fromHtml(title).toString();
+    public static void setTitle(String titre) {
+        title = Html.fromHtml(titre).toString();
     }
 
     public String getEditor() {
         return editor;
     }
 
-    public void setEditor(String editor) {
-        this.editor = editor;
+    public static void setEditor(String edit) {
+        editor = edit;
     }
 
     public String getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public static void setDate(String dt) {
+        date = dt;
     }
 
     public String getImg() {
         return img;
     }
 
-    public static void setImg(String img) {
-        this.img = img;
+    public static void setImg(String image) {
+        img = image;
     }
 
     public String getContent() {
         return content;
     }
 
-    public static void setContent(String content) {
-        this.content = Html.fromHtml(content).toString();
+    public static void setContent(String ct) {
+        content = Html.fromHtml(ct).toString();
     }
 
     public String getUnescapedUrl() {
         return unescapedUrl;
     }
 
-    public void setUnescapedUrl(String unescapedUrl) {
-        this.unescapedUrl = unescapedUrl;
+    public static void setUnescapedUrl(String Url) {
+        unescapedUrl = Url;
     }
 
     @Override
