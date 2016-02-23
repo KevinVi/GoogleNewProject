@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int j, k, total = 0;
     boolean test = false;
     EditText text;
-    Button btn;
+    Button btn, btn_international, btn_france, btn_economie, btn_culture, btn_sport, btn_sante;
     String search_unsplit;
     LinearLayout ll;
     LinearLayout LL;
