@@ -40,13 +40,15 @@ public class JsonRequest extends AsyncTask<Object, Void, ArrayList<Data>> {
 
     ArrayList<Data> contents = new ArrayList<>();
     Data content_data = null;
-    Database db;
+    Database db=null;
 
     public JsonRequest(Context ctx, Database d) {
         mContext = ctx;
         db = d;
     }
-
+    public JsonRequest(Context ctx) {
+        mContext = ctx;
+    }
     @Override
     protected ArrayList<Data> doInBackground(Object... params) {
         final String data = (String) params[0];
@@ -95,8 +97,10 @@ public class JsonRequest extends AsyncTask<Object, Void, ArrayList<Data>> {
                     }catch (Exception e){
                         image = null;
                     }
-                    content_data = new Data(title, content, publisher, date, image, urlWeb);
-                    db.insertNews(title, content, image, urlWeb, date, publisher, data);
+                    content_data = new Data(title, content, image, urlWeb,date,publisher , data);
+                    if(db!=null){
+                        db.insertNews(title, content, image, urlWeb, date, publisher, data);
+                    }
                     contents.add(content_data);
 
                 }

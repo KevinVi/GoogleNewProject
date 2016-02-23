@@ -1,10 +1,13 @@
 package com.exemple.projetgooglenews.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 
 import com.exemple.projetgooglenews.R;
 import com.exemple.projetgooglenews.model.Data;
+import com.exemple.projetgooglenews.service.BackgroundPuller;
 import com.exemple.projetgooglenews.tools.JsonRequest;
 import com.exemple.projetgooglenews.database.Database;
 
@@ -32,7 +36,7 @@ import java.util.concurrent.ExecutionException;
 import static android.widget.LinearLayout.*;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    int j, k, total = 0;
+    int j, total = 0;
     boolean test = false;
     EditText text;
     Button btn, btn_international, btn_france, btn_economie, btn_culture, btn_sport, btn_sante;
@@ -40,23 +44,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout ll;
     LinearLayout LL;
     int width;
-    LinearLayout.LayoutParams lp;
-    LinearLayout.LayoutParams parame;
-    private static final int REQUEST_CODE = 10;
-    private static final int BUTTON_ID = 1;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private Context mContext;
     private Database News_db;
+    FloatingActionButton refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         News_db = new Database(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
+
+        //btn
+        btn_international = (Button) findViewById(R.id.international);
+        btn_culture = (Button) findViewById(R.id.culture);
+        btn_economie = (Button) findViewById(R.id.economie);
+        btn_france = (Button) findViewById(R.id.france);
+        btn_sante = (Button) findViewById(R.id.sante);
+        btn_sport = (Button) findViewById(R.id.sport);
+        refresh = (FloatingActionButton) findViewById(R.id.refresh);
+        btn_france.setOnClickListener(this);
+        btn_sport.setOnClickListener(this);
+        btn_sante.setOnClickListener(this);
+        btn_economie.setOnClickListener(this);
+        btn_culture.setOnClickListener(this);
+        btn_international.setOnClickListener(this);
+        refresh.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, BackgroundPuller.class);
+                stopService(intent);
+                startService(intent);
+            }
+        });
 
         mContext = getApplicationContext();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -65,35 +90,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onNavigationItemSelected(MenuItem menuItem) {
 
 
-                //Checking if the item is in checked state or not, if not make it in checked state
                 if (menuItem.isChecked()) menuItem.setChecked(false);
                 else menuItem.setChecked(true);
 
-                //Closing drawer on item click
                 drawerLayout.closeDrawers();
 
-                //Check to see which item was being clicked and perform appropriate action
                 switch (menuItem.getItemId()) {
 
 
-                    //Replacing the main content with ContentFragment Which is our Inbox View;
                     case R.id.home:
-                        Toast.makeText(getApplicationContext(), "Inbox Selected", Toast.LENGTH_SHORT).show();
+                        Intent in = new Intent(mContext, HomeActivity.class);
+                        in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(in);
                         return true;
 
-                    // For rest of the options we just show a toast on click
 
                     case R.id.favoris:
-                        Toast.makeText(getApplicationContext(), "Stared Selected", Toast.LENGTH_SHORT).show();
+
                         Intent i = new Intent(mContext, ListActivity.class);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(i);
                         return true;
                     case R.id.search:
-                        Toast.makeText(getApplicationContext(), "Send Selected", Toast.LENGTH_SHORT).show();
+
                         return true;
                     case R.id.settings:
-                        Toast.makeText(getApplicationContext(), "Drafts Selected", Toast.LENGTH_SHORT).show();
+
                         Intent intent = new Intent(mContext, SettingActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
@@ -111,24 +133,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
                 super.onDrawerClosed(drawerView);
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                // Code here will be triggered once the drawer open as we dont want anything to happen so we leave this blank
 
                 super.onDrawerOpened(drawerView);
             }
         };
 
-        //Setting the actionbarToggle to drawer layout
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-        //calling sync state is necessay or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
+        if (getIntent().getExtras() != null) {
+            int maj = getIntent().getExtras().getInt("maj");
 
+
+            if (maj!=0){
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        this);
+
+                // set title
+                alertDialogBuilder.setTitle(getResources().getString(R.string.maj));
+
+                // set dialog message
+                alertDialogBuilder
+                        .setMessage(getResources().getString(R.string.content,maj))
+                        .setCancelable(false)
+                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+
+        }
 
         text = (EditText) findViewById(R.id.text_2);
         btn = (Button) findViewById(R.id.btn);
@@ -175,13 +216,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     check = News_db.getNewsViaKey(title);
                     //check = new JsonRequest(getApplicationContext(),News_db).execute(title).get();
 
-                    Intent i = new Intent(getApplicationContext(), ListActivity.class);
+                    Intent i = new Intent(getApplicationContext(), RecyclerActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                     i.putExtra("search", title);
                     i.putExtra("data", check);
                     getApplicationContext().startActivity(i);
-                    finish();
                 }
             });
             int buttonwidth = myButton.getText().length();
@@ -189,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (25 > total + buttonwidth + 5) {
                 LL.addView(myButton, lp);
                 total += buttonwidth;
+                test = true;
             } else {
                 total = 0;
                 ll.addView(LL, j);
@@ -201,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 test = true;
             }
         }
-        if (test) {
+        if (test && separated.length>0) {
             ll.addView(LL, j);
         }
 
@@ -230,7 +271,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.action_list) {
             Intent i = new Intent(this, ListActivity.class);
             startActivity(i);
-            finish();
 
         }
         if (id == R.id.action_search) {
@@ -242,104 +282,78 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        Intent i = new Intent(this, RecyclerActivity.class);
+        ArrayList<Data> check = null;
+        switch (v.getId()) {
+            case R.id.btn:
+                if (!(text.getText().length() < 1)) {
 
-        if (v.getId() == btn.getId()) {
-            if (!(text.getText().length() < 1)) {
+                    try {
+                        Log.i("coucoucoucouc---", News_db.getNewsViaKey("Obama").toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    SharedPreferences.Editor editor = getSharedPreferences("pref", MODE_PRIVATE).edit();
+                    if (search_unsplit.length() < 1) {
+                        search_unsplit = text.getText().toString();
+                    } else {
+                        search_unsplit += ";" + text.getText().toString();
+                    }
+                    Log.i("dzdzz", search_unsplit);
+                    editor.putString("search", search_unsplit);
+                    editor.commit();
 
-                try {
-                    Log.i("coucoucoucouc---", News_db.getNewsViaKey("Obama").toString());
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                SharedPreferences.Editor editor = getSharedPreferences("pref", MODE_PRIVATE).edit();
-                if (search_unsplit.length() < 1) {
-                    search_unsplit = text.getText().toString();
+
+                    try {
+                        check = new JsonRequest(getApplicationContext(), News_db).execute(text.getText().toString()).get();
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    i.putExtra("search", text.getText().toString());
+
                 } else {
-                    search_unsplit += ";" + text.getText().toString();
+                    Snackbar.make(findViewById(android.R.id.content), "Search Empty", Snackbar.LENGTH_LONG)
+                            .setActionTextColor(Color.RED)
+                            .show();
                 }
-                Log.i("dzdzz", search_unsplit);
-                editor.putString("search", search_unsplit);
-                editor.commit();
+                break;
 
-                ArrayList<Data> check = null;
-                try {
-                    check = new JsonRequest(getApplicationContext(), News_db).execute(text.getText().toString()).get();
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                Intent i = new Intent(this, ListActivity.class);
-
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra("search", text.getText().toString());
-                i.putExtra("data", check);
-                startActivity(i);
-                finish();
-            } else {
-                Snackbar.make(findViewById(android.R.id.content), "Search Empty", Snackbar.LENGTH_LONG)
-                        .setActionTextColor(Color.RED)
-                        .show();
-            }
+            case R.id.sport:
+                check = News_db.getNewsViaKey("sport");
+                i.putExtra("search", "Sport");
+                break;
+            case R.id.economie:
+                check = News_db.getNewsViaKey("economie");
+                i.putExtra("search", "Economie");
+                break;
+            case R.id.france:
+                check = News_db.getNewsViaKey("france");
+                i.putExtra("search", "France");
+                break;
+            case R.id.culture:
+                check = News_db.getNewsViaKey("culture");
+                i.putExtra("search", "Culture");
+                break;
+            case R.id.sante:
+                check = News_db.getNewsViaKey("sante");
+                i.putExtra("search", "Santé");
+                break;
+            case R.id.international:
+                check = News_db.getNewsViaKey("international");
+                i.putExtra("search", "International");
+                break;
         }
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.putExtra("data", check);
+        startActivity(i);
+
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                if (data != null) {
-                    SharedPreferences prefs = getSharedPreferences("pref", MODE_PRIVATE);
-                    search_unsplit = prefs.getString("search", "");
 
-                    //split
-                    String[] separated = search_unsplit.split(";");
-
-
-                    for (int i = 0; i < separated.length; i++) {
-
-                        int linearwidth = LL.getWidth();
-
-                        final Button myButton = new Button(this);
-                        myButton.setText(separated[i]);
-                        final String title = separated[i];
-                        myButton.setLayoutParams(parame);
-                        myButton.setOnClickListener(new OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent i = new Intent(MainActivity.this, ListActivity.class);
-                                Log.i("-------", "title : " + title);
-                                i.putExtra("search", title);
-                                startActivity(i);
-                                finish();
-                            }
-                        });
-                        int buttonwidth = myButton.getText().length();
-                        Log.i("tag", "width" + width + "| layout width" + linearwidth + "||button" + buttonwidth);
-                        if (25 > total + buttonwidth + 5) {
-                            LL.addView(myButton, lp);
-                            total += buttonwidth;
-                        } else {
-                            total = 0;
-                            ll.addView(LL, j);
-                            j++;
-                            LL = new LinearLayout(this);
-                            LL.setBackgroundColor(Color.CYAN);
-                            LL.setOrientation(LinearLayout.HORIZONTAL);
-                            LL.setLayoutParams(lp);
-                            LL.addView(myButton, lp);
-                            test = true;
-                        }
-                    }
-                    if (test) {
-                        ll.addView(LL, j);
-                    }
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-
-    }
 }

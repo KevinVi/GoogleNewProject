@@ -73,13 +73,13 @@ public class RecyclerActivity extends AppCompatActivity {
                     // For rest of the options we just show a toast on click
 
                     case R.id.favoris:
-                        Toast.makeText(getApplicationContext(),"Stared Selected",Toast.LENGTH_SHORT).show();
+
                         Intent i = new Intent(mContext,ListActivity.class);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(i);
                         return true;
                     case R.id.search:
-                        Toast.makeText(getApplicationContext(),"MAin",Toast.LENGTH_SHORT).show();
+
                         Intent in = new Intent(mContext,MainActivity.class);
                         in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(in);
@@ -166,7 +166,9 @@ public class RecyclerActivity extends AppCompatActivity {
 
         }
         if(id == R.id.action_search){
-            return true;
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -38,6 +39,7 @@ public class ImageLoader extends AsyncTask<Object, Void, Bitmap> {
         if (data.length > 0) {
             String url;
             Bitmap bitmap;
+            Log.i("URL",  String.valueOf(data[0]));
             try {
 
                 url = String.valueOf(data[0]);
@@ -71,7 +73,7 @@ public class ImageLoader extends AsyncTask<Object, Void, Bitmap> {
     @Override
     protected void onPostExecute(Bitmap btm) {
         if (btm!=null) {
-//            bar.setVisibility(View.GONE);
+            bar.setVisibility(View.GONE);
             img.setImageBitmap(btm);
         }
     }

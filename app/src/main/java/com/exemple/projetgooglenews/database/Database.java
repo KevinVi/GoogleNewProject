@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
 import com.exemple.projetgooglenews.model.Data;
 
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public class Database extends SQLiteOpenHelper {
 
     public Database(Context context) {
         super(context, DATABASE_NAME, null, 1);
-        SQLiteDatabase db = this.getWritableDatabase();
+        //SQLiteDatabase db = this.getWritableDatabase();
     }
 
     @Override
@@ -106,7 +108,7 @@ public class Database extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
 
-                Data news = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7));
+                Data news = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7),cursor.getString(9));
 
                 newsList.add(news);
             } while (cursor.moveToNext());
@@ -125,7 +127,8 @@ public class Database extends SQLiteOpenHelper {
             do {
                 //Data.setFavoris("false");
                 //Data.setKeyWord(cursor.getString(9));
-                Data news = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7));
+                Log.i("helllo", cursor.getString(1) + " why" + cursor.getString(3));
+                Data news = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7),cursor.getString(9));
                 newsList.add(news);
             } while (cursor.moveToNext());
         }
@@ -141,7 +144,7 @@ public class Database extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Data fav = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7));
+                Data fav = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7),cursor.getString(9));
 
                 favList.add(fav);
             } while (cursor.moveToNext());

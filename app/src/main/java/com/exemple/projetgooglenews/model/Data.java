@@ -12,19 +12,26 @@ public class Data implements Serializable {
     public String title;
     public String content;
     public String editor;
-    public  String date;
-    public  String img;
-    public  String unescapedUrl;
+    public String date;
+    public String img;
+    public String unescapedUrl;
+    public String keyword;
+    public Boolean favoris;
+    public Boolean visible;
 
 
-    public Data(String title, String content, String editor, String date, String img, String url) {
+    public Data(String title, String content, String img, String url, String date, String editor,String search) {
         this.content = Html.fromHtml(content).toString();
         this.title = Html.fromHtml(title).toString();
         this.editor = editor;
         this.date = date;
         this.img = img;
         this.unescapedUrl = url;
+        this.keyword=search;
+        favoris=false;
+        visible=true;
     }
+
     public Data() {
     }
 
@@ -32,7 +39,7 @@ public class Data implements Serializable {
         return title;
     }
 
-    public  void setTitle(String titre) {
+    public void setTitle(String titre) {
         title = Html.fromHtml(titre).toString();
     }
 
@@ -40,7 +47,7 @@ public class Data implements Serializable {
         return editor;
     }
 
-    public  void setEditor(String edit) {
+    public void setEditor(String edit) {
         editor = edit;
     }
 
@@ -48,7 +55,7 @@ public class Data implements Serializable {
         return date;
     }
 
-    public  void setDate(String dt) {
+    public void setDate(String dt) {
         date = dt;
     }
 
@@ -56,7 +63,7 @@ public class Data implements Serializable {
         return img;
     }
 
-    public  void setImg(String image) {
+    public void setImg(String image) {
         img = image;
     }
 
@@ -64,7 +71,7 @@ public class Data implements Serializable {
         return content;
     }
 
-    public  void setContent(String ct) {
+    public void setContent(String ct) {
         content = Html.fromHtml(ct).toString();
     }
 
@@ -72,7 +79,7 @@ public class Data implements Serializable {
         return unescapedUrl;
     }
 
-    public  void setUnescapedUrl(String Url) {
+    public void setUnescapedUrl(String Url) {
         unescapedUrl = Url;
     }
 

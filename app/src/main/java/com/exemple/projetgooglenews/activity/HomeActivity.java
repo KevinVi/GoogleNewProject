@@ -2,45 +2,43 @@ package com.exemple.projetgooglenews.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.graphics.Bitmap;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.exemple.projetgooglenews.R;
 import com.exemple.projetgooglenews.database.Database;
 import com.exemple.projetgooglenews.model.Data;
-import com.exemple.projetgooglenews.tools.JsonRequest;
+import com.exemple.projetgooglenews.tools.ImageLoader;
 
-import java.util.ArrayList;
-
-/**
- * Created by kevin on 12/01/2016.
- */
-public class ListActivity extends AppCompatActivity {
-    String title="Favoris";
-    ArrayList<Data> data = null;
-    private Database news_db;
+public class HomeActivity extends AppCompatActivity {
+    private Database News_db;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private Context mContext;
+    TextView title, content, link;
+    ProgressBar bar;
+    ImageView img;
+    Button fav;
+    Data mData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.list_activity);
-
-        news_db = new Database(this);
+        setContentView(R.layout.activity_home);
+        News_db = new Database(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
         setSupportActionBar(toolbar);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -61,13 +59,13 @@ public class ListActivity extends AppCompatActivity {
 
                     case R.id.home:
 
-                        Intent i = new Intent(mContext, HomeActivity.class);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        mContext.startActivity(i);
                         return true;
 
                     case R.id.favoris:
 
+                        Intent i = new Intent(mContext, ListActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(i);
                         return true;
                     case R.id.search:
                         Intent in = new Intent(mContext, MainActivity.class);
@@ -106,29 +104,54 @@ public class ListActivity extends AppCompatActivity {
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
         actionBarDrawerToggle.syncState();
-
-
-        data = news_db.getAllFavourites();
-        TextView t = (TextView)findViewById(R.id.title_search);
-        t.setText(title);
-
-        final ListView listview = (ListView) findViewById(R.id.listview);
-        ListAdapter adapter = new com.exemple.projetgooglenews.adapter.ListAdapter(this, data);
-        ListView lv=(ListView)findViewById(R.id.listview);
-        lv.setAdapter(adapter);
-
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
+        fav = (Button) findViewById(R.id.favoris_home);
+        fav.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id) {
-                final String item = (String) parent.getItemAtPosition(position);
-                Log.i("hello", "here"+position) ;
+            public void onClick(View v) {
+
+                if(fav.getText().equals(getString(R.string.favoris))){
+                    fav.setText(getString(R.string.r_favoris));
+                    //News_db.setFavoris();
+                }else{
+                    fav.setText(getString(R.string.favoris));
+                    //News_db.removeFavoris();
+                }
 
             }
-
         });
+
+/*
+        title = (TextView)findViewById(R.id.title_detail);
+        content= (TextView)findViewById(R.id.content_detail);
+        link = (TextView) findViewById(R.id.link_web);
+        img = (ImageView) findViewById(R.id.img_detail);
+        bar = (ProgressBar) findViewById(R.id.progressHome);
+
+       // mData=News_db.getLastNews();
+
+        title.setText(mData.getTitle());
+        content.setText(mData.getContent());
+
+        link.setText(mData.getUnescapedUrl());
+        link.setLinksClickable(true);
+        final String web_link=mData.getUnescapedUrl();
+        link.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(HomeActivity.this, WebActivity.class);
+                i.putExtra("link", web_link);
+                startActivity(i);
+            }
+        });
+        Bitmap btm  ;
+        try {
+            new ImageLoader(bar,img,getApplicationContext()).execute(mData.getImg());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -145,19 +168,21 @@ public class ListActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent i = new Intent(this,SettingActivity.class);
+            Intent i = new Intent(this, SettingActivity.class);
             startActivity(i);
         }
-        if(id==R.id.action_list){
-            return true;
+        if (id == R.id.action_list) {
+            Intent i = new Intent(this, ListActivity.class);
+            startActivity(i);
+            finish();
+
         }
-        if(id == R.id.action_search){
-            Intent i = new Intent(this,MainActivity.class);
+        if (id == R.id.action_search) {
+            Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
             finish();
         }
+
         return super.onOptionsItemSelected(item);
     }
-
-
 }

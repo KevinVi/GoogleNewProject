@@ -6,7 +6,7 @@
         <item
             android:id="@+id/home"
             android:checked="false"
-            android:icon="@android:drawable/btn_star_big_on"
+            android:icon="@android:drawable/ic_menu_view"
             android:title="home" />
 
         <item

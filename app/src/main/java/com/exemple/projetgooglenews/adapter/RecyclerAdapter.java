@@ -1,9 +1,12 @@
 package com.exemple.projetgooglenews.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.exemple.projetgooglenews.R;
+import com.exemple.projetgooglenews.activity.DetailActivity;
 import com.exemple.projetgooglenews.model.Data;
 import com.exemple.projetgooglenews.tools.ImageLoader;
 
@@ -43,10 +47,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         try{
             holder.getTitle().setText(mData.get(position).getTitle());
             holder.getContent().setText(mData.get(position).getContent());
+            Log.i("helloe img ",mData.get(position).getImg() +  mData.get(position).getTitle());
             if (mHashMap.containsKey(mData.get(position).getImg())) {
                 SoftReference<Bitmap> ref = mHashMap.get(mData.get(position).getImg());
                 Bitmap bitmap = ref.get();
@@ -65,6 +70,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                         .execute(mData.get(position).getImg(),
                                 mHashMap);
             }
+            holder.getCard().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(mContext, DetailActivity.class);
+                    Bundle args = new Bundle();
+                    args.putSerializable("mData", mData.get(position));
+                    i.putExtra("mData", args);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(i);
+                }
+            });
         }catch (Exception e){
             e.printStackTrace();
         }
