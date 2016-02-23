@@ -9,12 +9,12 @@ import java.io.Serializable;
  * Created by kevin on 12/01/2016.
  */
 public class Data implements Serializable {
-    public static String title;
-    public static String content;
-    public static String editor;
-    public static String date;
-    public static String img;
-    public static String unescapedUrl;
+    public String title;
+    public String content;
+    public String editor;
+    public  String date;
+    public  String img;
+    public  String unescapedUrl;
 
 
     public Data(String title, String content, String editor, String date, String img, String url) {
@@ -32,7 +32,7 @@ public class Data implements Serializable {
         return title;
     }
 
-    public static void setTitle(String titre) {
+    public  void setTitle(String titre) {
         title = Html.fromHtml(titre).toString();
     }
 
@@ -40,7 +40,7 @@ public class Data implements Serializable {
         return editor;
     }
 
-    public static void setEditor(String edit) {
+    public  void setEditor(String edit) {
         editor = edit;
     }
 
@@ -48,7 +48,7 @@ public class Data implements Serializable {
         return date;
     }
 
-    public static void setDate(String dt) {
+    public  void setDate(String dt) {
         date = dt;
     }
 
@@ -56,7 +56,7 @@ public class Data implements Serializable {
         return img;
     }
 
-    public static void setImg(String image) {
+    public  void setImg(String image) {
         img = image;
     }
 
@@ -64,7 +64,7 @@ public class Data implements Serializable {
         return content;
     }
 
-    public static void setContent(String ct) {
+    public  void setContent(String ct) {
         content = Html.fromHtml(ct).toString();
     }
 
@@ -72,7 +72,7 @@ public class Data implements Serializable {
         return unescapedUrl;
     }
 
-    public static void setUnescapedUrl(String Url) {
+    public  void setUnescapedUrl(String Url) {
         unescapedUrl = Url;
     }
 

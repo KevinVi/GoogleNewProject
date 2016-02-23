@@ -25,16 +25,18 @@ import com.exemple.projetgooglenews.R;
 import com.exemple.projetgooglenews.model.Data;
 import com.exemple.projetgooglenews.tools.JsonRequest;
 import com.exemple.projetgooglenews.database.Database;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
 import static android.widget.LinearLayout.*;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    int j,k,total =0;
-    boolean test=false;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    int j, k, total = 0;
+    boolean test = false;
     EditText text;
     Button btn;
-    String search_unsplit ;
+    String search_unsplit;
     LinearLayout ll;
     LinearLayout LL;
     int width;
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
-        mContext=getApplicationContext();
+        mContext = getApplicationContext();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             // This method will trigger on item Click of navigation menu
             @Override
@@ -64,48 +66,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
                 //Checking if the item is in checked state or not, if not make it in checked state
-                if(menuItem.isChecked()) menuItem.setChecked(false);
+                if (menuItem.isChecked()) menuItem.setChecked(false);
                 else menuItem.setChecked(true);
 
                 //Closing drawer on item click
                 drawerLayout.closeDrawers();
 
                 //Check to see which item was being clicked and perform appropriate action
-                switch (menuItem.getItemId()){
+                switch (menuItem.getItemId()) {
 
 
                     //Replacing the main content with ContentFragment Which is our Inbox View;
                     case R.id.home:
-                        Toast.makeText(getApplicationContext(),"Inbox Selected", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Inbox Selected", Toast.LENGTH_SHORT).show();
                         return true;
 
                     // For rest of the options we just show a toast on click
 
                     case R.id.favoris:
-                        Toast.makeText(getApplicationContext(),"Stared Selected",Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(mContext,ListActivity.class);
+                        Toast.makeText(getApplicationContext(), "Stared Selected", Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(mContext, ListActivity.class);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(i);
                         return true;
                     case R.id.search:
-                        Toast.makeText(getApplicationContext(),"Send Selected",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Send Selected", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.settings:
-                        Toast.makeText(getApplicationContext(),"Drafts Selected",Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(mContext,SettingActivity.class);
+                        Toast.makeText(getApplicationContext(), "Drafts Selected", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(mContext, SettingActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent);
                         return true;
 
                     default:
-                        Toast.makeText(getApplicationContext(),"Somethings Wrong",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
                         return true;
 
                 }
             }
         });
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.openDrawer, R.string.closeDrawer){
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -128,11 +130,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         actionBarDrawerToggle.syncState();
 
 
-        text= (EditText)findViewById(R.id.text_2);
-        btn = (Button)findViewById(R.id.btn);
+        text = (EditText) findViewById(R.id.text_2);
+        btn = (Button) findViewById(R.id.btn);
         btn.setOnClickListener(this);
-        ll = (LinearLayout)findViewById(R.id.my_test);
-        width= ll.getWidth();
+        ll = (LinearLayout) findViewById(R.id.my_test);
+        width = ll.getWidth();
 
 
         LinearLayout.LayoutParams parame = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -146,14 +148,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         SharedPreferences prefs = getSharedPreferences("pref", MODE_PRIVATE);
-        search_unsplit = prefs.getString("search","");
+        search_unsplit = prefs.getString("search", "");
 
         //split
-        String[] separated=search_unsplit.split(";");
+        String[] separated = search_unsplit.split(";");
 
-        Log.i("length",separated.length+"");
+        Log.i("length", separated.length + "");
 
-        for(int i=0;i<separated.length;i++) {
+        for (int i = 0; i < separated.length; i++) {
 
             int linearwidth = LL.getWidth();
             Log.i("sep", separated[i]);
@@ -168,44 +170,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void onClick(View v) {
                     Log.i("-------", "title : " + title);
                     ArrayList<Data> check = null;
-                    try {
-                        check = new JsonRequest(getApplicationContext()).execute(title).get();
 
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                    Intent i = new Intent(getApplicationContext(), RecyclerActivity.class);
+
+                    check = News_db.getNewsViaKey(title);
+                    //check = new JsonRequest(getApplicationContext(),News_db).execute(title).get();
+
+                    Intent i = new Intent(getApplicationContext(), ListActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                     i.putExtra("search", title);
-                    i.putExtra("data",check);
+                    i.putExtra("data", check);
                     getApplicationContext().startActivity(i);
                     finish();
                 }
             });
-            int buttonwidth=myButton.getText().length();
-            Log.i("tag","width"+width +"| layout width"+linearwidth+"||button"+buttonwidth);
-            if(25>total+buttonwidth+5) {
+            int buttonwidth = myButton.getText().length();
+            Log.i("tag", "width" + width + "| layout width" + linearwidth + "||button" + buttonwidth);
+            if (25 > total + buttonwidth + 5) {
                 LL.addView(myButton, lp);
-                total+=buttonwidth;
-            }else{
-                total=0;
-                ll.addView(LL,j);
+                total += buttonwidth;
+            } else {
+                total = 0;
+                ll.addView(LL, j);
                 j++;
-                LL=new LinearLayout(this);
+                LL = new LinearLayout(this);
                 LL.setBackgroundColor(Color.CYAN);
                 LL.setOrientation(LinearLayout.HORIZONTAL);
                 LL.setLayoutParams(lp);
                 LL.addView(myButton, lp);
-                test=true;
+                test = true;
             }
         }
-        if(test){
-            ll.addView(LL,j);
+        if (test) {
+            ll.addView(LL, j);
         }
-
 
 
     }
@@ -226,16 +224,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent i = new Intent(this,SettingActivity.class);
+            Intent i = new Intent(this, SettingActivity.class);
             startActivity(i);
         }
-        if(id==R.id.action_list){
-            Intent i = new Intent(this,ListActivity.class);
+        if (id == R.id.action_list) {
+            Intent i = new Intent(this, ListActivity.class);
             startActivity(i);
             finish();
 
         }
-        if(id == R.id.action_search){
+        if (id == R.id.action_search) {
             return true;
         }
 
@@ -245,8 +243,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
 
-        if(v.getId()==btn.getId()) {
+        if (v.getId() == btn.getId()) {
             if (!(text.getText().length() < 1)) {
+
+                try {
+                    Log.i("coucoucoucouc---", News_db.getNewsViaKey("Obama").toString());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 SharedPreferences.Editor editor = getSharedPreferences("pref", MODE_PRIVATE).edit();
                 if (search_unsplit.length() < 1) {
                     search_unsplit = text.getText().toString();
@@ -259,18 +263,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 ArrayList<Data> check = null;
                 try {
-                    check = new JsonRequest(getApplicationContext()).execute(text.getText().toString()).get();
+                    check = new JsonRequest(getApplicationContext(), News_db).execute(text.getText().toString()).get();
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-                Intent i = new Intent(this, RecyclerActivity.class);
+                Intent i = new Intent(this, ListActivity.class);
 
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.putExtra("search", text.getText().toString());
-                i.putExtra("data",check);
+                i.putExtra("data", check);
                 startActivity(i);
                 finish();
             } else {
@@ -284,17 +288,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode==REQUEST_CODE){
-            if(resultCode==RESULT_OK){
-                if(data!=null){
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
                     SharedPreferences prefs = getSharedPreferences("pref", MODE_PRIVATE);
-                    search_unsplit = prefs.getString("search","");
+                    search_unsplit = prefs.getString("search", "");
 
                     //split
-                    String[] separated=search_unsplit.split(";");
+                    String[] separated = search_unsplit.split(";");
 
 
-                    for(int i=0;i<separated.length;i++) {
+                    for (int i = 0; i < separated.length; i++) {
 
                         int linearwidth = LL.getWidth();
 
@@ -306,31 +310,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onClick(View v) {
                                 Intent i = new Intent(MainActivity.this, ListActivity.class);
-                                Log.i("-------","title : "+title);
+                                Log.i("-------", "title : " + title);
                                 i.putExtra("search", title);
                                 startActivity(i);
                                 finish();
                             }
                         });
-                        int buttonwidth=myButton.getText().length();
-                        Log.i("tag","width"+width +"| layout width"+linearwidth+"||button"+buttonwidth);
-                        if(25>total+buttonwidth+5) {
+                        int buttonwidth = myButton.getText().length();
+                        Log.i("tag", "width" + width + "| layout width" + linearwidth + "||button" + buttonwidth);
+                        if (25 > total + buttonwidth + 5) {
                             LL.addView(myButton, lp);
-                            total+=buttonwidth;
-                        }else{
-                            total=0;
-                            ll.addView(LL,j);
+                            total += buttonwidth;
+                        } else {
+                            total = 0;
+                            ll.addView(LL, j);
                             j++;
-                            LL=new LinearLayout(this);
+                            LL = new LinearLayout(this);
                             LL.setBackgroundColor(Color.CYAN);
                             LL.setOrientation(LinearLayout.HORIZONTAL);
                             LL.setLayoutParams(lp);
                             LL.addView(myButton, lp);
-                            test=true;
+                            test = true;
                         }
                     }
-                    if(test){
-                        ll.addView(LL,j);
+                    if (test) {
+                        ll.addView(LL, j);
                     }
                 }
             }

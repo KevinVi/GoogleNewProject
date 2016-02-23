@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import com.exemple.projetgooglenews.database.Database;
 import com.exemple.projetgooglenews.model.Data;
 
 import org.json.JSONArray;
@@ -39,15 +40,18 @@ public class JsonRequest extends AsyncTask<Object, Void, ArrayList<Data>> {
 
     ArrayList<Data> contents = new ArrayList<>();
     Data content_data = null;
+    Database db;
 
-    public JsonRequest(Context ctx) {
+    public JsonRequest(Context ctx, Database d) {
         mContext = ctx;
+        db = d;
     }
 
     @Override
     protected ArrayList<Data> doInBackground(Object... params) {
         final String data = (String) params[0];
 
+        Log.i("/-*", data);
         WifiManager wm = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
         URL url = null;
@@ -77,33 +81,36 @@ public class JsonRequest extends AsyncTask<Object, Void, ArrayList<Data>> {
                 for (int i = 0; i < results.length(); i++) {
                     JSONObject contentResult = results.getJSONObject(i);
 
+
+                    Log.i("WTF",contentResult.toString());
                     String title = contentResult.getString(TITLE);
                     String content = contentResult.getString(CONTENT);
                     String date = contentResult.getString(DATE);
                     String publisher = contentResult.getString(PUBLISHER);
                     String urlWeb = contentResult.getString(URL);
-                    JSONObject img = contentResult.getJSONObject(IMAGE);
-                    String image = img.getString(IMG);
-
+                    String image;
+                    try {
+                        JSONObject img = contentResult.getJSONObject(IMAGE);
+                         image = img.getString(IMG);
+                    }catch (Exception e){
+                        image = null;
+                    }
                     content_data = new Data(title, content, publisher, date, image, urlWeb);
-
+                    db.insertNews(title, content, image, urlWeb, date, publisher, data);
                     contents.add(content_data);
 
                 }
-
-
+                Log.i("blabla ---", contents.toString());
                 return contents;
             } catch (Exception ex) {
                 ex.printStackTrace();
                 return null;
-
             }
 
         } catch (Exception e) {
             e.printStackTrace();
 
         }
-
 
         return null;
     }

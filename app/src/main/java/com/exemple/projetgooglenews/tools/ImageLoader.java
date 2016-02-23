@@ -70,7 +70,9 @@ public class ImageLoader extends AsyncTask<Object, Void, Bitmap> {
 
     @Override
     protected void onPostExecute(Bitmap btm) {
-        bar.setVisibility(View.GONE);
-        img.setImageBitmap(btm);
+        if (btm!=null) {
+//            bar.setVisibility(View.GONE);
+            img.setImageBitmap(btm);
+        }
     }
 }

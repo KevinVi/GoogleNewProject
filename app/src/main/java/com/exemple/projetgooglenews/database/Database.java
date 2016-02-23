@@ -37,7 +37,7 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table" + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, Titre TEXT, Contenu TEXT, Image TEXT," +
+        db.execSQL("CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, Titre TEXT, Contenu TEXT, Image TEXT," +
                 "URL TEXT, Visible TEXT, Date TEXT, Auteur TEXT, Favoris TEXT, KeyWord TEXT)");
     }
 
@@ -90,7 +90,7 @@ public class Database extends SQLiteOpenHelper {
     //TODO Max(date)
     public void getLastNews(){
 
-        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_date+"= true";
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_date+"= 'true'";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -98,23 +98,15 @@ public class Database extends SQLiteOpenHelper {
 
     public List<Data> getAllNews() {
         List<Data> newsList = new ArrayList<Data>();
-        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_visible+"= true";
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_visible+"= 'true'";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
-                Data news = new Data();
-                Data.setTitle(cursor.getString(1));
-                Data.setContent(cursor.getString(2));
-                Data.setImg(cursor.getString(3));
-                Data.setUnescapedUrl(cursor.getString(4));
-                //Data.setVisibility("true");
-                Data.setDate(cursor.getString(6));
-                Data.setEditor(cursor.getString(7));
-                //Data.setFavoris("false");
-                Data.setKeyWord(cursor.getString(9));;
+
+                Data news = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7));
 
                 newsList.add(news);
             } while (cursor.moveToNext());
@@ -122,48 +114,34 @@ public class Database extends SQLiteOpenHelper {
         return newsList;
     }
 
-    public List<Data> getNewsViaKey(String key) {
-        List<Data> newsList = new ArrayList<Data>();
-        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_keyWord+"= "+key;
+    public ArrayList<Data> getNewsViaKey(String key) {
+        ArrayList<Data> newsList = new ArrayList<Data>();
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_keyWord+"= '"+key+"'";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
-                Data news = new Data();
-                Data.setTitle(cursor.getString(1));
-                Data.setContent(cursor.getString(2));
-                Data.setImg(cursor.getString(3));
-                Data.setUnescapedUrl(cursor.getString(4));
-                //Data.setVisibility("true");
-                Data.setDate(cursor.getString(6));
-                Data.setEditor(cursor.getString(7));
                 //Data.setFavoris("false");
-                Data.setKeyWord(cursor.getString(9));
-
+                //Data.setKeyWord(cursor.getString(9));
+                Data news = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7));
                 newsList.add(news);
             } while (cursor.moveToNext());
         }
         return newsList;
     }
 
-    public List<Data> getAllFavourites() {
-        List<Data> favList = new ArrayList<Data>();
-        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_favoris+"= true";
+    public ArrayList<Data> getAllFavourites() {
+        ArrayList<Data> favList = new ArrayList<Data>();
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_favoris+"= 'true'";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
-                Data fav = new Data();
-                Data.setTitle(cursor.getString(1));
-                Data.setContent(cursor.getString(2));
-                Data.setImg(cursor.getString(3));
-                Data.setUnescapedUrl(cursor.getString(4));
-                Data.setDate(cursor.getString(6));
-                Data.setEditor(cursor.getString(7));
+                Data fav = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7));
 
                 favList.add(fav);
             } while (cursor.moveToNext());
