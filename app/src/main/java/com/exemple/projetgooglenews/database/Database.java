@@ -31,7 +31,6 @@ public class Database extends SQLiteOpenHelper {
     public static final String COL_keyWord = "KeyWord";
 
 
-
     public Database(Context context) {
         super(context, DATABASE_NAME, null, 1);
         //SQLiteDatabase db = this.getWritableDatabase();
@@ -45,11 +44,11 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXIST "+TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXIST " + TABLE_NAME);
         onCreate(db);
     }
 
-    public boolean insertNews(String titre, String contenu, String img, String url, String date, String auteur, String tag ){
+    public boolean insertNews(String titre, String contenu, String img, String url, String date, String auteur, String tag) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -71,36 +70,52 @@ public class Database extends SQLiteOpenHelper {
             return true;
     }
 
-    public void setVisibility(String id){
+    public void setVisibility(String url) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_visible, "true");
-        db.update(TABLE_NAME, contentValues, "Id =" + id, null);
+        db.update(TABLE_NAME, contentValues, COL_url + " = '" + url +"'", null);
         db.close();
     }
 
-    public void setFavoris(String id){
+    public void setFavoris(String url) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_favoris, "true");
-        db.update(TABLE_NAME, contentValues, "Id = " + id, null);
+        db.update(TABLE_NAME, contentValues, COL_url + " = '" + url +"'", null);
+        db.close();
+    }
+
+    public void removeFavoris(String url) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_favoris, "false");
+        db.update(TABLE_NAME, contentValues, COL_url + " = '" + url + "'", null);
         db.close();
     }
 
     //TODO Max(date)
-    public void getLastNews(){
+    public Data getLastNews() {
 
-        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_date+"= 'true'";
+        String selectQuery = "SELECT *, MAX(" + COL_id + ") FROM " + TABLE_NAME + " WHERE " + COL_visible + "= 'true'";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        Data news = null;
+        if (cursor.moveToFirst()) {
+            do {
+               news = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7), cursor.getString(9));
+            } while (cursor.moveToNext());
+        }
+        return news;
     }
 
     public List<Data> getAllNews() {
         List<Data> newsList = new ArrayList<Data>();
-        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_visible+"= 'true'";
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME + " WHERE " + COL_visible + "= 'true'";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -108,7 +123,7 @@ public class Database extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
 
-                Data news = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7),cursor.getString(9));
+                Data news = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7), cursor.getString(9));
 
                 newsList.add(news);
             } while (cursor.moveToNext());
@@ -118,7 +133,7 @@ public class Database extends SQLiteOpenHelper {
 
     public ArrayList<Data> getNewsViaKey(String key) {
         ArrayList<Data> newsList = new ArrayList<Data>();
-        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_keyWord+"= '"+key+"'";
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME + " WHERE " + COL_keyWord + "= '" + key + "'"+ " AND " + COL_visible + "= 'true'";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -128,7 +143,7 @@ public class Database extends SQLiteOpenHelper {
                 //Data.setFavoris("false");
                 //Data.setKeyWord(cursor.getString(9));
                 Log.i("helllo", cursor.getString(1) + " why" + cursor.getString(3));
-                Data news = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7),cursor.getString(9));
+                Data news = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7), cursor.getString(9));
                 newsList.add(news);
             } while (cursor.moveToNext());
         }
@@ -137,18 +152,19 @@ public class Database extends SQLiteOpenHelper {
 
     public ArrayList<Data> getAllFavourites() {
         ArrayList<Data> favList = new ArrayList<Data>();
-        String selectQuery = "SELECT  * FROM " + TABLE_NAME +" WHERE "+COL_favoris+"= 'true'";
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME + " WHERE " + COL_favoris + "= 'true'";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
-                Data fav = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7),cursor.getString(9));
+                Data fav = new Data(cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(6), cursor.getString(7), cursor.getString(9));
 
                 favList.add(fav);
             } while (cursor.moveToNext());
         }
+        Log.i("helllo---",favList.toString());
         return favList;
     }
 }

@@ -55,7 +55,8 @@ public class ListAdapter extends ArrayAdapter<Data> {
             TextView tt1 = (TextView) v.findViewById(R.id.number_list);
             TextView tt2 = (TextView) v.findViewById(R.id.content_list);
             ImageView img = (ImageView) v.findViewById(R.id.image_list);
-            ProgressBar bar = (ProgressBar) v.findViewById(R.id.progressRcycler);
+            ProgressBar bar = (ProgressBar) v.findViewById(R.id.progressList);
+
 
             if (tt1 != null) {
                 tt1.setText(p.title);

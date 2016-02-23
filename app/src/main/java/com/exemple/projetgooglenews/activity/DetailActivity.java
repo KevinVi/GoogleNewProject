@@ -1,8 +1,12 @@
 package com.exemple.projetgooglenews.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.util.Linkify;
@@ -14,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.exemple.projetgooglenews.R;
 import com.exemple.projetgooglenews.database.Database;
@@ -27,8 +32,10 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     TextView title , content, link;
     ProgressBar bar;
     ImageView img;
-    Button fav,invis;
-    Data mData;
+    Button fav,invis,share;
+    Data mData;private NavigationView navigationView;
+    private DrawerLayout drawerLayout;
+    private Context mContext;
     private Database news_db;
 
     @Override
@@ -37,6 +44,71 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.detail_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mContext = getApplicationContext();
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            // This method will trigger on item Click of navigation menu
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+
+
+                if (menuItem.isChecked()) menuItem.setChecked(false);
+                else menuItem.setChecked(true);
+
+                drawerLayout.closeDrawers();
+
+                switch (menuItem.getItemId()) {
+
+
+                    case R.id.home:
+                        Intent it = new Intent(mContext, HomeActivity.class);
+                        it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(it);
+                        return true;
+
+                    case R.id.favoris:
+
+                        Intent i = new Intent(mContext, ListActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(i);
+                        return true;
+                    case R.id.search:
+                        Intent in = new Intent(mContext, MainActivity.class);
+                        in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(in);
+                        return true;
+                    case R.id.settings:
+
+                        Intent intent = new Intent(mContext, SettingActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
+                        return true;
+
+                    default:
+                        Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
+                        return true;
+
+                }
+            }
+        });
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+
+        actionBarDrawerToggle.syncState();
 
         news_db = new Database(this);
         title = (TextView)findViewById(R.id.title_detail);
@@ -48,6 +120,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         invis = (Button) findViewById(R.id.remove_list);
         fav.setOnClickListener(this);
         invis.setOnClickListener(this);
+        share = (Button) findViewById(R.id.share);
+        share.setOnClickListener(this);
 
         Intent i = getIntent();
         Bundle mBundle = i.getBundleExtra("mData");
@@ -114,14 +188,27 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.add_fav:
                 if(fav.getText().equals(getString(R.string.favoris))){
                     fav.setText(getString(R.string.r_favoris));
-                    //News_db.setFavoris();
+                    news_db.setFavoris(mData.getUnescapedUrl());
                 }else{
                     fav.setText(getString(R.string.favoris));
-                    //News_db.removeFavoris();
+                    news_db.removeFavoris(mData.getUnescapedUrl());
                 }
                 break;
             case R.id.remove_list:
-                // news_db.setVisibility();
+                 news_db.setVisibility(mData.getUnescapedUrl());
+                break;
+            case R.id.share:
+                share = (Button) findViewById(R.id.share);
+                share.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, mData.getTitle());
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, mData.getUnescapedUrl());
+                        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                    }
+                });
                 break;
         }
     }

@@ -31,7 +31,7 @@ public class HomeActivity extends AppCompatActivity {
     TextView title, content, link;
     ProgressBar bar;
     ImageView img;
-    Button fav;
+    Button fav,share;
     Data mData;
 
     @Override
@@ -39,7 +39,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         News_db = new Database(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         mContext = getApplicationContext();
@@ -104,6 +104,8 @@ public class HomeActivity extends AppCompatActivity {
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
         actionBarDrawerToggle.syncState();
+
+        mData = News_db.getLastNews();
         fav = (Button) findViewById(R.id.favoris_home);
         fav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,16 +113,26 @@ public class HomeActivity extends AppCompatActivity {
 
                 if(fav.getText().equals(getString(R.string.favoris))){
                     fav.setText(getString(R.string.r_favoris));
-                    //News_db.setFavoris();
+                    News_db.setFavoris(mData.getUnescapedUrl());
                 }else{
                     fav.setText(getString(R.string.favoris));
-                    //News_db.removeFavoris();
+                    News_db.removeFavoris(mData.getUnescapedUrl());
                 }
 
             }
         });
+        share = (Button) findViewById(R.id.share);
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, mData.getTitle());
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, mData.getUnescapedUrl());
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            }
+        });
 
-/*
         title = (TextView)findViewById(R.id.title_detail);
         content= (TextView)findViewById(R.id.content_detail);
         link = (TextView) findViewById(R.id.link_web);
@@ -149,7 +161,7 @@ public class HomeActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     @Override

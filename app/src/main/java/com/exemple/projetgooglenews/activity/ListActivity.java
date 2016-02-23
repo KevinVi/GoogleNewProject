@@ -41,7 +41,7 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.list_activity);
 
         news_db = new Database(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
         mContext = getApplicationContext();

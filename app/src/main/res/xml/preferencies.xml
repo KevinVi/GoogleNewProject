@@ -9,6 +9,13 @@
             android:title="Reset application"
             android:summary="Delete all data"
             />
+        <EditTextPreference
+            android:defaultValue="1"
+            android:dialogTitle="Refresh Timer"
+            android:inputType="number"
+            android:key="pref_query_limit"
+            android:summary="Data update timer"
+            android:title="Timer" />
 
     </PreferenceCategory>
 </PreferenceScreen>

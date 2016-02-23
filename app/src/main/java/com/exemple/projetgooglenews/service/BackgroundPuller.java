@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -32,7 +33,14 @@ public class BackgroundPuller extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand");
-        int time = 1* 60 * 1000;
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        int timer;
+        try{
+            timer = SP.getInt("pref_query_limit", 1);
+        }catch (Exception e){
+            timer=1;
+        }
+        int time = timer* 60 * 1000;
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {

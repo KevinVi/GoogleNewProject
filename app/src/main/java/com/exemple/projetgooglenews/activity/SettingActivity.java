@@ -43,6 +43,7 @@ public class SettingActivity extends PreferenceActivity {
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
+    public static int timer=1;
     @Override
     protected void onCreate(final Bundle savedInstanceState)
     {
